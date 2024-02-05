@@ -5,7 +5,7 @@ import * as styles from './App.css'
 function App() {
   return (
      <div className={styles.rootStyles}>
-       <WordleGrid rows={5} cols={5}/>
+       <WordleGrid rows={5} columns={5}/>
      </div>
   )
 }

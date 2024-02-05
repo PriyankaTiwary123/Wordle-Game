@@ -5,12 +5,17 @@ export const wordleGrid = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  gridTemplateColumns: 'repeat(5, 1fr)',
   backgroundColor: '#000000',
   gap: '10px',
   marginTop: '20px',
 });
 
-export const letterInput = style({
+export const wordleGridRow = style({
+  // display: 'flex',
+})
+
+export const cellInput = style({
   width: '60px',
   height: '60px',
   marginTop: '10px',
@@ -26,6 +31,6 @@ export const letterInput = style({
   cursor: 'pointer',
 });
 
-globalStyle(`${letterInput}:focus`, {
+globalStyle(`${cellInput}:focus`, {
   outline: 'none',
 });

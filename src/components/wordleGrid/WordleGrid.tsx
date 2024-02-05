@@ -1,16 +1,22 @@
 import { useMemo } from "react";
 import * as styles from "./WordleGrid.css";
 
-const WordleGrid: React.FC<{ rows: number; cols: number }> = ({
+const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
   rows,
-  cols,
+  columns,
 }) => {
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLDivElement>,
     rowIndex: number,
     colIndex: number
   ) => {
-    console.log(event.key, rowIndex, colIndex);
+    const { key } = event;
+    if (/^[a-zA-Z]$/.test(key)) {
+      console.log(key, rowIndex, colIndex);
+    }
+    else {
+      event.preventDefault();
+    }
   };
 
   const generateGrid = useMemo(() => {
@@ -18,11 +24,11 @@ const WordleGrid: React.FC<{ rows: number; cols: number }> = ({
 
     for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
       const row = [];
-      for (let colIndex = 0; colIndex < cols; colIndex++) {
+      for (let colIndex = 0; colIndex < columns; colIndex++) {
         row.push(
           <div
             key={colIndex}
-            className={styles.letterInput}
+            className={styles.cellInput}
             contentEditable={true}
             onKeyPress={(event) => handleKeyPress(event, rowIndex, colIndex)}
           ></div>
@@ -36,7 +42,7 @@ const WordleGrid: React.FC<{ rows: number; cols: number }> = ({
     }
 
     return gridItems;
-  }, [rows, cols]);
+  }, [rows, columns]);
 
   return <div className={styles.wordleGrid}>{generateGrid}</div>;
 };
