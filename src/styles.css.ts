@@ -9,4 +9,7 @@ globalStyle('html, body, #root', {
 
 globalStyle('#root', {
   backgroundColor: '#000',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 });
