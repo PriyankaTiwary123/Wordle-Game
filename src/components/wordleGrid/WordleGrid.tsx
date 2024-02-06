@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
+import { fetchRandomWord } from "../../api";
 import * as styles from "./WordleGrid.css";
 
 const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
@@ -9,24 +10,13 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
   const [expectedWord, setExpectedWord] = useState<string | null>(null); // State to store the expected word
 
   useEffect(() => {
-    fetchRandomWord();
+    fetchExpectedWord();
   }, []);
 
-  const fetchRandomWord = async () => {
-    try {
-      const response = await fetch(
-        "https://random-word-api.herokuapp.com/word?length=5"
-      );
-      if (response.ok) {
-        const data = await response.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setExpectedWord(data[0].toUpperCase());
-        }
-      } else {
-        throw new Error("Failed to fetch word");
-      }
-    } catch (error) {
-      console.error("Error fetching word:", error);
+  const fetchExpectedWord = async () => {
+    const word = await fetchRandomWord();
+    if (word) {
+      setExpectedWord(word);
     }
   };
 
@@ -75,7 +65,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
       } else if (key === "Enter") {
         validateWord(colIndex, rowIndex);
       } else {
-        event.preventDefault(); 
+        event.preventDefault();
       }
     }
   };
@@ -109,7 +99,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     const correctLetter = expectedWord.includes(letter);
     const correctPosition = expectedWord[position]?.toUpperCase() === letter;
     if (!letter) {
-      return ''; 
+      return "";
     }
     if (letter && correctLetter && correctPosition) {
       return styles.wordMatched;
@@ -151,4 +141,4 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
   return <div>{generateGrid}</div>;
 };
 
-export default WordleGrid
+export default WordleGrid;
