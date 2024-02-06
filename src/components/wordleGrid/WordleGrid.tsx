@@ -66,12 +66,32 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
         currentWord += cellRefs.current[i][j].current?.value || "";
       }
     }
+
+    setGuessedWord(currentWord);
     if (currentWord.toUpperCase() === expectedWord.toUpperCase()) {
-      console.log(guessedWord, "Entered word is correct!");
+      console.log(currentWord, "Entered word is correct!");
     } else {
-      console.log(guessedWord, "Entered word is Incorrect!");
+      console.log(currentWord, "Entered word is Incorrect!");
     }
   };
+
+    const validateGridColor = (colIndex: number, rowIndex: number): string => {
+      const position = colIndex + rowIndex * columns;
+      const letter = guessedWord[position]?.toUpperCase();
+      const expectedWord = "APPLE"; //sample wprd
+      const correctLetter = expectedWord.includes(letter);
+      const correctPosition = expectedWord[position]?.toUpperCase() === letter;
+    
+      if (!letter) {
+        return ''; 
+      } else if (correctLetter && correctPosition) {
+        return styles.wordMatched;
+      } else if (correctLetter) {
+        return styles.wordInGrid;
+      } else {
+        return styles.wordNotInGrid;
+      }
+    };
 
   const generateGrid = useMemo(() => {
     const wordleGrids = [];
@@ -80,10 +100,11 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
       const row = [];
       for (let colIndex = 0; colIndex < columns; colIndex++) {
         const cellRef = cellRefs.current[rowIndex][colIndex];
+        const cellStyle = validateGridColor(colIndex, rowIndex);
         row.push(
           <input
             key={colIndex}
-            className={styles.cellInput}
+            className={`${styles.cellInput} ${cellStyle}`}
             type="text"
             maxLength={1}
             onKeyUp={(event) => handleKeyPress(event, rowIndex, colIndex)}
@@ -98,7 +119,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
       );
     }
     return wordleGrids;
-  }, [rows, columns]);
+  }, [rows, columns, guessedWord]);
 
   return <div>{generateGrid}</div>;
 };
