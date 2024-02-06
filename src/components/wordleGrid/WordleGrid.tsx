@@ -1,35 +1,23 @@
-import { useState, useEffect, useMemo, useRef } from "react";
-import { fetchRandomWord } from "../../api";
+import { useEffect, useMemo } from "react";
+import { useWordValidation } from "../../hooks/useWordValidation";
 import * as styles from "./WordleGrid.css";
 
 const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
   rows,
   columns,
 }) => {
-  const [guessedWord, setGuessedWord] = useState("");
-  const [expectedWord, setExpectedWord] = useState<string | null>(null); // State to store the expected word
+  const {
+    fetchExpectedWord,
+    validateWord,
+    validateGridColor,
+    guessedWord,
+    expectedWord,
+    cellRefs,
+  } = useWordValidation(rows, columns);
 
   useEffect(() => {
     fetchExpectedWord();
   }, []);
-
-  const fetchExpectedWord = async () => {
-    const word = await fetchRandomWord();
-    if (word) {
-      setExpectedWord(word);
-    }
-  };
-
-  const cellRefs = useRef<
-    Array<Array<React.MutableRefObject<HTMLInputElement | null>>>
-  >([]);
-  for (let i = 0; i < rows; i++) {
-    cellRefs.current.push(
-      Array.from({ length: columns }, () =>
-        useRef<HTMLInputElement | null>(null)
-      )
-    );
-  }
 
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLInputElement>,
@@ -42,7 +30,6 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
 
     if (currentCell) {
       if (key === "Backspace") {
-        // Handle backspace functionality
         event.preventDefault();
         currentCell.value = "";
 
@@ -67,46 +54,6 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
       } else {
         event.preventDefault();
       }
-    }
-  };
-
-  const validateWord = (colIndex: number, rowIndex: number) => {
-    if (!expectedWord) {
-      console.error("word not available.");
-      return;
-    }
-
-    let currentWord = "";
-
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        currentWord += cellRefs.current[i][j].current?.value || "";
-      }
-    }
-
-    setGuessedWord(currentWord);
-    if (currentWord.toUpperCase() === expectedWord.toUpperCase()) {
-      console.log(currentWord, "Entered word is correct!");
-    } else {
-      console.log(currentWord, "Entered word is Incorrect!");
-    }
-  };
-
-  const validateGridColor = (colIndex: number, rowIndex: number): string => {
-    if (!expectedWord) return styles.wordNotInGrid;
-    const position = colIndex + rowIndex * columns;
-    const letter = guessedWord[position]?.toUpperCase();
-    const correctLetter = expectedWord.includes(letter);
-    const correctPosition = expectedWord[position]?.toUpperCase() === letter;
-    if (!letter) {
-      return "";
-    }
-    if (letter && correctLetter && correctPosition) {
-      return styles.wordMatched;
-    } else if (letter && correctLetter) {
-      return styles.wordInGrid;
-    } else {
-      return styles.wordNotInGrid;
     }
   };
 
