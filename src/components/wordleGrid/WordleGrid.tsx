@@ -1,10 +1,12 @@
-import { useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import * as styles from "./WordleGrid.css";
 
 const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
   rows,
   columns,
 }) => {
+  const [guessedWord, setGuessedWord] = useState("");
+
   const cellRefs = useRef<
     Array<Array<React.MutableRefObject<HTMLInputElement | null>>>
   >([]);
@@ -24,13 +26,13 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     const { key } = event;
     const currentCellRef = cellRefs.current[rowIndex][colIndex];
     const currentCell = currentCellRef.current;
-  
+
     if (currentCell) {
       if (key === "Backspace") {
         // Handle backspace functionality
         event.preventDefault();
         currentCell.value = "";
-  
+
         if (colIndex > 0) {
           const prevCol = colIndex - 1;
           cellRefs.current[rowIndex][prevCol]?.current?.focus();
@@ -40,7 +42,6 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
           cellRefs.current[prevRow][lastCol]?.current?.focus();
         }
       } else if (/^[a-zA-Z]$/.test(key)) {
-        console.log('currentCell', currentCell)  
         if (colIndex < columns - 1) {
           const nextCol = colIndex + 1;
           cellRefs.current[rowIndex][nextCol]?.current?.focus();
@@ -48,11 +49,29 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
           const nextRow = rowIndex + 1;
           cellRefs.current[nextRow][0]?.current?.focus();
         }
+      } else if (key === "Enter") {
+        validateWord(colIndex, rowIndex);
       } else {
         event.preventDefault(); // Prevent entering characters other than alphabets
       }
     }
-  };  
+  };
+
+  const validateWord = (colIndex: number, rowIndex: number) => {
+    const expectedWord = "APPLE"; // Change this to the expected word
+    let currentWord = "";
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        currentWord += cellRefs.current[i][j].current?.value || "";
+      }
+    }
+    if (currentWord.toUpperCase() === expectedWord.toUpperCase()) {
+      console.log(guessedWord, "Entered word is correct!");
+    } else {
+      console.log(guessedWord, "Entered word is Incorrect!");
+    }
+  };
 
   const generateGrid = useMemo(() => {
     const wordleGrids = [];

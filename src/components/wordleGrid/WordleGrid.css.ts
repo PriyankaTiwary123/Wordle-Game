@@ -20,6 +20,17 @@ export const cellInput = style({
   textTransform: 'uppercase',
   cursor: 'pointer',
 });
+export const wordMatched = style({
+  backgroundColor: '#538D4E',
+});
+
+export const wordInGrid = style({
+  backgroundColor: '#BEA11F',
+});
+
+export const wordNotInGrid = style({
+  backgroundColor: '#3A3A3C',
+});
 
 globalStyle(`${cellInput}:focus`, {
   outline: 'none',
