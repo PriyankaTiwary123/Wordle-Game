@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { REGEX } from "../../constant";
 import { useWordValidation } from "../../hooks/useWordValidation";
 import * as styles from "./WordleGrid.css";
 
@@ -10,13 +11,13 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     fetchExpectedWord,
     validateWord,
     validateGridColor,
-    guessedWord,
+    guessedWords,
     expectedWord,
     cellRefs,
   } = useWordValidation(rows, columns);
 
   useEffect(() => {
-    fetchExpectedWord();
+    fetchExpectedWord;
   }, []);
 
   const handleKeyPress = (
@@ -41,7 +42,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
           const lastCol = columns - 1;
           cellRefs.current[prevRow][lastCol]?.current?.focus();
         }
-      } else if (/^[a-zA-Z]$/.test(key)) {
+      } else if (REGEX.test(key)) {
         if (colIndex < columns - 1) {
           const nextCol = colIndex + 1;
           cellRefs.current[rowIndex][nextCol]?.current?.focus();
@@ -50,7 +51,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
           cellRefs.current[nextRow][0]?.current?.focus();
         }
       } else if (key === "Enter") {
-        validateWord(colIndex, rowIndex);
+        validateWord();
       } else {
         event.preventDefault();
       }
@@ -83,7 +84,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
       );
     }
     return wordleGrids;
-  }, [rows, columns, guessedWord, expectedWord]);
+  }, [rows, columns, guessedWords, expectedWord]);
 
   return <div>{generateGrid}</div>;
 };

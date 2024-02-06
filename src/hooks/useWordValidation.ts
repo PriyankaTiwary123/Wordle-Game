@@ -3,19 +3,16 @@ import { fetchRandomWord } from "../api";
 import * as styles from "../components/wordleGrid/WordleGrid.css";
 
 export const useWordValidation = (rows: number, columns: number) => {
-  const [guessedWord, setGuessedWord] = useState("");
+  const [guessedWords, setGuessedWords] = useState<string[]>([]);
   const [expectedWord, setExpectedWord] = useState<string | null>(null);
+  const [rowIndex, setRowIndex] = useState(0);
 
-  useEffect(() => {
-    fetchExpectedWord();
-  }, []);
-
-  const fetchExpectedWord = async () => {
+  const fetchExpectedWord = useMemo(async () => {
     const word = await fetchRandomWord();
     if (word) {
       setExpectedWord(word);
     }
-  };
+  }, []);
 
   const cellRefs = useRef<
     Array<Array<React.MutableRefObject<HTMLInputElement | null>>>
@@ -28,40 +25,50 @@ export const useWordValidation = (rows: number, columns: number) => {
     );
   }
 
-  const validateWord = (colIndex: number, rowIndex: number) => {
-    if (!expectedWord) {
-      console.error("word not available.");
+  const validateWord = () => {
+    if (!expectedWord || rowIndex >= rows) {
       return;
     }
 
     let currentWord = "";
-
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        currentWord += cellRefs.current[i][j].current?.value || "";
-      }
+    for (let j = 0; j < columns; j++) {
+      currentWord += cellRefs.current[rowIndex][j].current?.value || "";
     }
+    setGuessedWords((prevGuessedWords) => {
+      const updatedGuessedWords = [...prevGuessedWords];
+      updatedGuessedWords[rowIndex] = currentWord;
+      return updatedGuessedWords;
+    });
 
-    setGuessedWord(currentWord);
-    if (currentWord.toUpperCase() === expectedWord.toUpperCase()) {
-      console.log(currentWord, "Entered word is correct!");
-    } else {
-      console.log(currentWord, "Entered word is Incorrect!");
-    }
+    setRowIndex(rowIndex + 1);
   };
 
-  const validateGridColor = (colIndex: number, rowIndex: number): string => {
+  useEffect(() => {
+    guessedWords.forEach((word, index) => {
+      if (word && word.toUpperCase() === expectedWord?.toUpperCase()) {
+        console.log(word, "Entered word for row", index, "is correct!");
+      } else if (word) {
+        console.log(word, "Entered word for row", index, "is incorrect!");
+      }
+    });
+  }, [guessedWords, expectedWord]);
+
+  const validateGridColor = (
+    colIndex: number,
+    gridRowIndex: number
+  ): string => {
     if (!expectedWord) return styles.wordNotInGrid;
-    const position = colIndex + rowIndex * columns;
-    const letter = guessedWord[position]?.toUpperCase();
-    const correctLetter = expectedWord.includes(letter);
-    const correctPosition = expectedWord[position]?.toUpperCase() === letter;
-    if (!letter) {
+
+    const guessedLetter = guessedWords[gridRowIndex]?.[colIndex]?.toUpperCase();
+    const expectedLetter = expectedWord[colIndex]?.toUpperCase();
+
+    if (!guessedLetter) {
       return "";
     }
-    if (letter && correctLetter && correctPosition) {
+
+    if (guessedLetter === expectedLetter) {
       return styles.wordMatched;
-    } else if (letter && correctLetter) {
+    } else if (expectedWord.includes(guessedLetter)) {
       return styles.wordInGrid;
     } else {
       return styles.wordNotInGrid;
@@ -72,7 +79,7 @@ export const useWordValidation = (rows: number, columns: number) => {
     fetchExpectedWord,
     validateWord,
     validateGridColor,
-    guessedWord,
+    guessedWords,
     expectedWord,
     cellRefs,
   };
