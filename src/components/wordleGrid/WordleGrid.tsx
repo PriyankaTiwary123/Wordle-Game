@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import * as styles from "./WordleGrid.css";
 
 const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
@@ -16,22 +16,30 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     );
   }
 
+  useEffect(() => {
+    console.log("Component mounted, focusing first cell");
+    cellRefs.current[0][0]?.current?.focus();
+  }, []);
+
   const handleKeyPress = (
-    event: React.KeyboardEvent<HTMLDivElement>,
+    event: React.KeyboardEvent<HTMLInputElement>,
     rowIndex: number,
     colIndex: number
   ) => {
-    const { key } = event;
-    if (/^[a-zA-Z]$/.test(key)) {
-      if (colIndex < columns - 1) {
-        const nextCol = colIndex + 1;
-        cellRefs.current[rowIndex][nextCol]?.current?.focus();
-      } else if (rowIndex < rows - 1) {
-        const nextRow = rowIndex + 1;
-        cellRefs.current[nextRow][0]?.current?.focus();
+    const { key, target } = event;
+    const currentCellRef = cellRefs.current[rowIndex][colIndex];
+    if (target === currentCellRef.current) {
+      if (/^[a-zA-Z]$/.test(key)) {
+        if (colIndex < columns - 1) {
+          const nextCol = colIndex + 1;
+          cellRefs.current[rowIndex][nextCol]?.current?.focus();
+        } else if (rowIndex < rows - 1) {
+          const nextRow = rowIndex + 1;
+          cellRefs.current[nextRow][0]?.current?.focus();
+        }
+      } else {
+        event.preventDefault(); // Prevent entering characters other than alphabets
       }
-    } else {
-      event.preventDefault(); // to prevent entering any other character other then alphabets
     }
   };
 
@@ -48,7 +56,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
             className={styles.cellInput}
             type="text"
             maxLength={1}
-            onKeyPress={(event) => handleKeyPress(event, rowIndex, colIndex)}
+            onKeyUp={(event) => handleKeyPress(event, rowIndex, colIndex)}
             ref={cellRef}
           />
         );
