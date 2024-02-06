@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import * as styles from "./WordleGrid.css";
 
 const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
@@ -6,6 +6,29 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
   columns,
 }) => {
   const [guessedWord, setGuessedWord] = useState("");
+  const [expectedWord, setExpectedWord] = useState<string | null>(null); // State to store the expected word
+
+  useEffect(() => {
+    fetchRandomWord();
+  }, []);
+
+  const fetchRandomWord = async () => {
+    try {
+      const response = await fetch(
+        "https://random-word-api.herokuapp.com/word?length=5"
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setExpectedWord(data[0].toUpperCase());
+        }
+      } else {
+        throw new Error("Failed to fetch word");
+      }
+    } catch (error) {
+      console.error("Error fetching word:", error);
+    }
+  };
 
   const cellRefs = useRef<
     Array<Array<React.MutableRefObject<HTMLInputElement | null>>>
@@ -52,13 +75,17 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
       } else if (key === "Enter") {
         validateWord(colIndex, rowIndex);
       } else {
-        event.preventDefault(); // Prevent entering characters other than alphabets
+        event.preventDefault(); 
       }
     }
   };
 
   const validateWord = (colIndex: number, rowIndex: number) => {
-    const expectedWord = "APPLE"; // Change this to the expected word
+    if (!expectedWord) {
+      console.error("word not available.");
+      return;
+    }
+
     let currentWord = "";
 
     for (let i = 0; i < rows; i++) {
@@ -75,23 +102,23 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     }
   };
 
-    const validateGridColor = (colIndex: number, rowIndex: number): string => {
-      const position = colIndex + rowIndex * columns;
-      const letter = guessedWord[position]?.toUpperCase();
-      const expectedWord = "APPLE"; //sample wprd
-      const correctLetter = expectedWord.includes(letter);
-      const correctPosition = expectedWord[position]?.toUpperCase() === letter;
-    
-      if (!letter) {
-        return ''; 
-      } else if (correctLetter && correctPosition) {
-        return styles.wordMatched;
-      } else if (correctLetter) {
-        return styles.wordInGrid;
-      } else {
-        return styles.wordNotInGrid;
-      }
-    };
+  const validateGridColor = (colIndex: number, rowIndex: number): string => {
+    if (!expectedWord) return styles.wordNotInGrid;
+    const position = colIndex + rowIndex * columns;
+    const letter = guessedWord[position]?.toUpperCase();
+    const correctLetter = expectedWord.includes(letter);
+    const correctPosition = expectedWord[position]?.toUpperCase() === letter;
+    if (!letter) {
+      return ''; 
+    }
+    if (letter && correctLetter && correctPosition) {
+      return styles.wordMatched;
+    } else if (letter && correctLetter) {
+      return styles.wordInGrid;
+    } else {
+      return styles.wordNotInGrid;
+    }
+  };
 
   const generateGrid = useMemo(() => {
     const wordleGrids = [];
@@ -119,9 +146,9 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
       );
     }
     return wordleGrids;
-  }, [rows, columns, guessedWord]);
+  }, [rows, columns, guessedWord, expectedWord]);
 
   return <div>{generateGrid}</div>;
 };
 
-export default WordleGrid;
+export default WordleGrid
