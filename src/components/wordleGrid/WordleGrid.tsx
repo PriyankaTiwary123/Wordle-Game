@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef } from "react";
+import { useMemo, useRef } from "react";
 import * as styles from "./WordleGrid.css";
 
 const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
@@ -16,20 +16,31 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     );
   }
 
-  useEffect(() => {
-    console.log("Component mounted, focusing first cell");
-    cellRefs.current[0][0]?.current?.focus();
-  }, []);
-
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLInputElement>,
     rowIndex: number,
     colIndex: number
   ) => {
-    const { key, target } = event;
+    const { key } = event;
     const currentCellRef = cellRefs.current[rowIndex][colIndex];
-    if (target === currentCellRef.current) {
-      if (/^[a-zA-Z]$/.test(key)) {
+    const currentCell = currentCellRef.current;
+  
+    if (currentCell) {
+      if (key === "Backspace") {
+        // Handle backspace functionality
+        event.preventDefault();
+        currentCell.value = "";
+  
+        if (colIndex > 0) {
+          const prevCol = colIndex - 1;
+          cellRefs.current[rowIndex][prevCol]?.current?.focus();
+        } else if (rowIndex > 0) {
+          const prevRow = rowIndex - 1;
+          const lastCol = columns - 1;
+          cellRefs.current[prevRow][lastCol]?.current?.focus();
+        }
+      } else if (/^[a-zA-Z]$/.test(key)) {
+        console.log('currentCell', currentCell)  
         if (colIndex < columns - 1) {
           const nextCol = colIndex + 1;
           cellRefs.current[rowIndex][nextCol]?.current?.focus();
@@ -41,10 +52,10 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
         event.preventDefault(); // Prevent entering characters other than alphabets
       }
     }
-  };
+  };  
 
   const generateGrid = useMemo(() => {
-    const gridItems = [];
+    const wordleGrids = [];
 
     for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
       const row = [];
@@ -61,13 +72,13 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
           />
         );
       }
-      gridItems.push(
+      wordleGrids.push(
         <div key={rowIndex} className={styles.wordleGridRow}>
           {row}
         </div>
       );
     }
-    return gridItems;
+    return wordleGrids;
   }, [rows, columns]);
 
   return <div>{generateGrid}</div>;
