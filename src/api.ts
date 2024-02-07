@@ -1,7 +1,9 @@
+import { WORDLE_API_URL } from "./constant";
+
 export const fetchRandomWord = async (): Promise<string | null> => {
   try {
     const response = await fetch(
-      "https://random-word-api.herokuapp.com/word?length=5"
+        WORDLE_API_URL
     );
     if (response.ok) {
       const data = await response.json();

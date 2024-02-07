@@ -1,6 +1,6 @@
 import './App.css'
-import WordleGrid from './components/wordleGrid/WordleGrid'
 import * as styles from './App.css'
+import WordleGrid from './components/Grid/WordleGrid'
 
 function App() {
   return (
