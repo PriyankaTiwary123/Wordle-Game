@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useCellRefs from "./useCellRefs";
 import useFetchExpectedWord from "./useFetchExpectedWords";
-import * as styles from "../components/Grid/WordleGrid.css";
+import * as styles from "../components/Grid/Grid.css";
 
 export const useWordValidation = (rows: number, columns: number) => {
   const cellRefs = useCellRefs(rows, columns);

@@ -1,10 +1,10 @@
 import * as styles from './App.css'
-import WordleGrid from './components/Grid/WordleGrid'
+import WordelHome from './pages/wordleGame/WordleHome'
 
 function App() {
   return (
      <div className={styles.rootStyles}>
-       <WordleGrid rows={5} columns={5}/>
+       <WordelHome rows={5} columns={5}/>
      </div>
   )
 }

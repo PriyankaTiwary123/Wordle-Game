@@ -1,20 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { REGEX } from "../../constant";
 import { useWordValidation } from "../../hooks/useWordValidation";
-import Modal from "../modal/Modal";
-import Button from "../Button/Button";
-import * as styles from "./WordleGrid.css";
+import * as styles from "./Grid.css";
 
-enum ModalType {
-  None,
-  Win,
-  Loss,
+interface GridProps {
+  rows: number;
+  columns: number;
+  setAttempts: Function;
 }
 
-const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
-  rows,
-  columns,
-}) => {
+const Grid: React.FC<GridProps> = ({ rows, columns, setAttempts }) => {
+  // const [attempts, setAttempts] = useState<number>(0);
+
   const {
     fetchExpectedWord,
     validateWord,
@@ -25,13 +22,6 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     expectedWord,
     cellRefs,
   } = useWordValidation(rows, columns);
-  const [showModal, setShowModal] = useState<ModalType>(ModalType.None);
-
-  const [attempts, setAttempts] = useState<number>(0);
-
-  useEffect(() => {
-    fetchExpectedWord;
-  }, []);
 
   const handleBackSpace = (
     currentCell: any,
@@ -57,7 +47,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
 
   const handleEnterKey = (rowIndex: number) => {
     validateWord();
-    setAttempts((prevAttempts) => prevAttempts + 1);
+    setAttempts((prevAttempts: number) => prevAttempts + 1);
     if (rowIndex < rows - 1) {
       const nextRow = rowIndex + 1;
       cellRefs.current[nextRow][0]?.current?.focus();
@@ -94,17 +84,6 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     }
   };
 
-  useEffect(() => {
-    const isGuessedWordCorrect = guessedWords.some(
-      (word) => word.toUpperCase() === expectedWord
-    );
-    if (isGuessedWordCorrect) {
-      setShowModal(ModalType.Win);
-    } else if (attempts === 5) {
-      setShowModal(ModalType.Loss);
-    }
-  }, [guessedWords, expectedWord, attempts]);
-
   const generateGrid = useMemo(() => {
     const wordleGrids = [];
 
@@ -133,56 +112,7 @@ const WordleGrid: React.FC<{ rows: number; columns: number }> = ({
     return wordleGrids;
   }, [rows, columns, guessedWords, expectedWord]);
 
-  const handleModalClose = () => {
-    setShowModal(ModalType.None);
-    setGuessedWords(Array(rows).fill(""));
-    setRowIndex(0);
-
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        const cellRef = cellRefs.current[i][j];
-        const currentCell = cellRef.current;
-        if (currentCell) {
-          currentCell.value = "";
-        }
-      }
-    }
-  };
-  const handleTryAgainClick = () => {
-    handleModalClose();
-  };
-
-  return (
-    <div>
-      {generateGrid}
-      <Modal show={showModal !== ModalType.None} onClose={handleModalClose}>
-        <div>
-          {showModal === ModalType.Win && (
-            <>
-            <img src={`/images/winIcon.png`} alt="win-icon" />
-              <h2>You're a Winner, Champ!</h2>
-              <div>
-                Congrats! You've just crushed it and won the game. Now, bask in
-                your glory and celebrate like a boss! 🎉
-              </div>
-            </>
-          )}
-          {showModal === ModalType.Loss && (
-            <>
-            <img src={`/images/lossIcon.png`} alt="loss-icon" />
-              <h2>Oops! Tough Luck, But Don't Give Up!</h2>
-              <div>
-                You didn't quite make it this time, but hey, no worries! Give it
-                another shot, and who knows, the next round might be your moment
-                of glory! Keep going, champ! 💪
-              </div>
-            </>
-          )}
-        <Button onClick={handleTryAgainClick} text="Try Again" />
-        </div>
-      </Modal>
-    </div>
-  );
+  return <div>{generateGrid}</div>;
 };
 
-export default WordleGrid;
+export default Grid;
