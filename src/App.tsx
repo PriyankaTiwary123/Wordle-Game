@@ -1,4 +1,3 @@
-import './App.css'
 import * as styles from './App.css'
 import WordleGrid from './components/Grid/WordleGrid'
 

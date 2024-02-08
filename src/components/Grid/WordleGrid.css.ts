@@ -1,4 +1,5 @@
 import { style, globalStyle } from '@vanilla-extract/css'
+import { colors } from '../../colors.css';
 
 export const wordleGridRow = style({
   display: 'flex',
@@ -11,10 +12,10 @@ export const cellInput = style({
   marginTop: '10px',
   borderRadius: '4px',
   padding: '10px',
-  color: '#fff',
-  background: '#000',
+  color: '#ffffff',
+  background: 'transparent',
   textAlign: 'center',
-  border: '1px solid #3A3A3C',
+  border: '2px solid #3A3A3C',
   fontSize: '32px',
   fontWeight: '700',
   textTransform: 'uppercase',

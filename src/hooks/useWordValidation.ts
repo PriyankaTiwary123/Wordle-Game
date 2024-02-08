@@ -28,24 +28,24 @@ export const useWordValidation = (rows: number, columns: number) => {
     setRowIndex(rowIndex + 1);
   };
 
-  useEffect(() => {
-    // Reset the correct flag
-    let isCorrect = true;
-    for (let i = 0; i < guessedWords.length; i++) {
-      const guess = guessedWords[i];
-      if (!guess) continue; // Skip empty guesses
-      const expected = expectedWord || "";
-      for (let j = 0; j < guess.length; j++) {
-        if (guess[j] !== expected[j]) {
-          isCorrect = false;
-          break;
-        }
-      }
-      // If the guess is correct, exit the loop
-      if (isCorrect) break;
-    }
-    setIsCorrectWord(isCorrect);
-  }, [guessedWords, expectedWord]);
+  // useEffect(() => {
+  //   // Reset the correct flag
+  //   let isCorrect = true;
+  //   for (let i = 0; i < guessedWords.length; i++) {
+  //     const guess = guessedWords[i];
+  //     if (!guess) continue; // Skip empty guesses
+  //     const expected = expectedWord || "";
+  //     for (let j = 0; j < guess.length; j++) {
+  //       if (guess[j] !== expected[j]) {
+  //         isCorrect = false;
+  //         break;
+  //       }
+  //     }
+  //     // If the guess is correct, exit the loop
+  //     if (isCorrect) break;
+  //   }
+  //   setIsCorrectWord(isCorrect);
+  // }, [guessedWords, expectedWord]);
 
   const validateGridColor = (
     colIndex: number,
@@ -60,10 +60,7 @@ export const useWordValidation = (rows: number, columns: number) => {
       return "";
     }
 
-    if (
-      guessedLetter === expectedLetter &&
-      expectedWord.indexOf(guessedLetter) === colIndex
-    ) {
+    if (guessedLetter === expectedLetter) {
       return styles.wordMatched;
     } else if (expectedWord.includes(guessedLetter)) {
       return styles.wordInGrid;
@@ -76,6 +73,8 @@ export const useWordValidation = (rows: number, columns: number) => {
     fetchExpectedWord,
     validateWord,
     validateGridColor,
+    setGuessedWords,
+    setRowIndex,
     guessedWords,
     expectedWord,
     cellRefs,
