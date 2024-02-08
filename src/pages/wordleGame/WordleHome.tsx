@@ -1,41 +1,23 @@
-import { useState, useEffect, useMemo } from "react";
-import Button from "../../components/Button/Button";
-import Modal from "../../components/modal/Modal";
-import { REGEX } from "../../constant";
-import * as styles from "../../components/Grid/Grid.css";
-import { useWordValidation } from "../../hooks/useWordValidation";
+import React, { useState, useEffect } from "react";
 import Grid from "../../components/Grid/Grid";
+import WordleModal from "./WordleModal";
+import { ModalType } from "../../enums";
+import { useWordValidation } from "../../hooks/useWordValidation";
+// import useFetchExpectedWord from "../../hooks/useFetchExpectedWords";
 
-enum ModalType {
-  None,
-  Win,
-  Loss,
-}
-
-const WordleHome: React.FC<{ rows: number; columns: number }> = ({
+const WordleHome: React.FC<{ rows: number; columns: number, expectedWord: string}> = ({
   rows,
   columns,
+  expectedWord
 }) => {
-  const {
-    fetchExpectedWord,
-    validateWord,
-    validateGridColor,
-    setGuessedWords,
-    setRowIndex,
-    guessedWords,
-    expectedWord,
-    cellRefs,
-  } = useWordValidation(rows, columns);
+  const { guessedWords, setGuessedWords, setRowIndex, cellRefs } =
+    useWordValidation(rows, columns, expectedWord);
   const [showModal, setShowModal] = useState<ModalType>(ModalType.None);
   const [attempts, setAttempts] = useState<number>(0);
 
   useEffect(() => {
-    fetchExpectedWord;
-  }, []);
-
-  useEffect(() => {
     const isGuessedWordCorrect = guessedWords.some(
-      (word) => word.toUpperCase() === expectedWord
+      (word) => word.toUpperCase() === expectedWord?.toUpperCase()
     );
     if (isGuessedWordCorrect) {
       setShowModal(ModalType.Win);
@@ -59,40 +41,12 @@ const WordleHome: React.FC<{ rows: number; columns: number }> = ({
       }
     }
   };
-  const handleTryAgainClick = () => {
-    handleModalClose();
-  };
 
   return (
-    <div>
-      <Grid rows={rows} columns={columns} setAttempts={setAttempts} />
-      <Modal show={showModal !== ModalType.None} onClose={handleModalClose}>
-        <div>
-          {showModal === ModalType.Win && (
-            <>
-              <img src={`/images/winIcon.png`} alt="win-icon" />
-              <h2>You're a Winner, Champ!</h2>
-              <div>
-                Congrats! You've just crushed it and won the game. Now, bask in
-                your glory and celebrate like a boss! 🎉
-              </div>
-            </>
-          )}
-          {showModal === ModalType.Loss && (
-            <>
-              <img src={`/images/lossIcon.png`} alt="loss-icon" />
-              <h2>Oops! Tough Luck, But Don't Give Up!</h2>
-              <div>
-                You didn't quite make it this time, but hey, no worries! Give it
-                another shot, and who knows, the next round might be your moment
-                of glory! Keep going, champ! 💪
-              </div>
-            </>
-          )}
-          <Button onClick={handleTryAgainClick} text="Try Again" />
-        </div>
-      </Modal>
-    </div>
+    <>
+      <Grid rows={rows} columns={columns} setAttempts={setAttempts} expectedWord={expectedWord} />
+      <WordleModal showModal={showModal} onClose={handleModalClose} />
+    </>
   );
 };
 

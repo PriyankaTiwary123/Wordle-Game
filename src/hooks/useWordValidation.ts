@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import useCellRefs from "./useCellRefs";
-import useFetchExpectedWord from "./useFetchExpectedWords";
 import * as styles from "../components/Grid/Grid.css";
+import { fetchRandomWord } from "../api";
 
-export const useWordValidation = (rows: number, columns: number) => {
+export const useWordValidation = (rows: number, columns: number, expectedWord: string) => {
   const cellRefs = useCellRefs(rows, columns);
-  const { expectedWord, fetchExpectedWord } = useFetchExpectedWord();
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
   const [isCorrectWord, setIsCorrectWord] = useState<boolean>(false);
   const [rowIndex, setRowIndex] = useState(0);
+
 
   const validateWord = () => {
     if (!expectedWord || rowIndex >= rows) {
@@ -70,7 +70,6 @@ export const useWordValidation = (rows: number, columns: number) => {
   };
 
   return {
-    fetchExpectedWord,
     validateWord,
     validateGridColor,
     setGuessedWords,

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { REGEX } from "../../constant";
 import { useWordValidation } from "../../hooks/useWordValidation";
 import * as styles from "./Grid.css";
@@ -7,21 +7,20 @@ interface GridProps {
   rows: number;
   columns: number;
   setAttempts: Function;
+  expectedWord: string;
 }
 
-const Grid: React.FC<GridProps> = ({ rows, columns, setAttempts }) => {
-  // const [attempts, setAttempts] = useState<number>(0);
+const Grid: React.FC<GridProps> = ({ rows, columns, setAttempts, expectedWord }) => {
+  //   const [attempts, setAttempts] = useState<number>(0);
 
   const {
-    fetchExpectedWord,
     validateWord,
     validateGridColor,
     setGuessedWords,
     setRowIndex,
     guessedWords,
-    expectedWord,
     cellRefs,
-  } = useWordValidation(rows, columns);
+  } = useWordValidation(rows, columns, expectedWord);
 
   const handleBackSpace = (
     currentCell: any,
