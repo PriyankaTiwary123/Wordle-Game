@@ -1,9 +1,9 @@
 import { useState } from "react";
 import useCellRefs from "./useCellRefs";
-import * as styles from "../components/Grid/Grid.css";
 import { REGEX } from "../constant";
 import { useWordleContext } from "../context/WordleContext";
 import { countLetterOccurrences } from "../utils/helper";
+import * as styles from "../components/Grid/Grid.css";
 
 export const useWordValidation = (rows: number, columns: number) => {
   const cellRefs = useCellRefs(rows, columns);
@@ -40,6 +40,13 @@ export const useWordValidation = (rows: number, columns: number) => {
     });
   };
 
+  const focusNextRow = () => {
+    if (rowIndex < rows - 1) {
+      const nextRow = rowIndex + 1;
+      cellRefs.current[nextRow][0]?.current?.focus();
+    }
+  };
+
   const handleBackSpace = (
     currentCell: any,
     colIndex: number,
@@ -56,9 +63,7 @@ export const useWordValidation = (rows: number, columns: number) => {
     getGuessedWordVal();
     setAttempts((prevAttempts: number) => prevAttempts + 1);
     focusNextRow();
-  };
 
-  const focusNextRow = () => {
     if (rowIndex < rows - 1) {
       const nextRow = rowIndex + 1;
       cellRefs.current[nextRow][0]?.current?.focus();
@@ -79,7 +84,11 @@ export const useWordValidation = (rows: number, columns: number) => {
     );
   };
 
-  const handleTabOrRegex = (key: string, currentCell: any, colIndex: number) => {
+  const handleTabOrRegex = (
+    key: string,
+    currentCell: any,
+    colIndex: number
+  ) => {
     if (REGEX.test(key)) {
       currentCell.value = key.toUpperCase();
     }
@@ -112,39 +121,44 @@ export const useWordValidation = (rows: number, columns: number) => {
     }
   };
 
-  const initializeResponse = () => {
-    return [styles.empty, styles.empty, styles.empty, styles.empty, styles.empty];
-  };
-
-  const validateWord = (
-    colIndex: number,
-    gridRowIndex: number
-  ): string => {
-    if (!expectedWord) return styles.notFound;
-    const response = initializeResponse();
+  const validateWord = (colIndex: number, gridRowIndex: number): string => {
+    const response = [
+      styles.empty,
+      styles.empty,
+      styles.empty,
+      styles.empty,
+      styles.empty,
+    ];
     const targetWordArr = expectedWord.split("");
     const guessedWordArr = guessedWords[gridRowIndex]?.split("");
     const letterCount = countLetterOccurrences(targetWordArr);
 
-    response.forEach((cellStyle, i) => {
+    for (let i = 0; i < targetWordArr.length; i++) {
       const guessedLetter = guessedWordArr && guessedWordArr[i];
       const targetLetter = targetWordArr[i];
       if (targetLetter === guessedLetter) {
         response[i] = styles.matched;
         letterCount[guessedLetter]--;
       }
-    });
+    }
 
-    response.forEach((cellStyle, i) => {
+    for (let i = 0; i < targetWordArr.length; i++) {
       const guessedLetter = guessedWordArr && guessedWordArr[i];
-      if (cellStyle === styles.matched) return;
+      if (response[i] === styles.matched) continue;
       if (letterCount[guessedLetter] && letterCount[guessedLetter] > 0) {
         response[i] = styles.found;
         letterCount[guessedLetter]--;
       }
-    });
+    }
+    const allGuessedLettersNotFound = guessedWordArr?.every(
+      (letter) => !targetWordArr.includes(letter)
+    );
 
-    if (response.every(cellStyle => cellStyle === styles.empty)) {
+    if (allGuessedLettersNotFound) {
+      return styles.empty;
+    }
+
+    if (response.every((cellStyle) => cellStyle === styles.empty)) {
       return styles.notFound;
     }
 
@@ -152,7 +166,6 @@ export const useWordValidation = (rows: number, columns: number) => {
   };
 
   return {
-    getGuessedWordVal,
     validateWord,
     setGuessedWords,
     setRowIndex,
@@ -166,4 +179,3 @@ export const useWordValidation = (rows: number, columns: number) => {
     cellRefs,
   };
 };
-

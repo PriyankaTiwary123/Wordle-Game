@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useWordValidation } from "../../hooks/useWordValidation";
 import { useWordleContext } from "../../context/WordleContext";
 import Modal from "../modal/Modal";
