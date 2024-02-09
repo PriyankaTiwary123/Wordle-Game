@@ -10,7 +10,7 @@ const Grid: React.FC<{
   columns: number;
 }> = ({ rows, columns }) => {
   const {
-    validateGridColor,
+    validateWord,
     setGuessedWords,
     setRowIndex,
     handleKeyPress,
@@ -27,7 +27,7 @@ const Grid: React.FC<{
     const row = [];
     for (let colIndex = 0; colIndex < columns; colIndex++) {
       const cellRef = cellRefs.current[rowIndex][colIndex];
-      const cellStyle = validateGridColor(colIndex, rowIndex);
+      const cellStyle = validateWord(colIndex, rowIndex);
       row.push(
         <input
           key={colIndex}
