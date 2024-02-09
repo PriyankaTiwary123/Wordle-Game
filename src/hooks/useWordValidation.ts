@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import useCellRefs from "./useCellRefs";
 import * as styles from "../components/Grid/Grid.css";
 import { REGEX } from "../constant";
+import { useWordleContext } from "../context/WordleContext";
 
 export const useWordValidation = (
   rows: number,
   columns: number,
-  expectedWord: string
 ) => {
   const cellRefs = useCellRefs(rows, columns);
+  const { expectedWord } = useWordleContext()
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
   const [attempts, setAttempts] = useState<number>(0);
   const [rowIndex, setRowIndex] = useState(0);

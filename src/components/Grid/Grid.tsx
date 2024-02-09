@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useWordValidation } from "../../hooks/useWordValidation";
+import { useWordleContext } from "../../context/WordleContext";
 import Modal from "../modal/Modal";
-import Button from "../Button/Button";
 import * as styles from "./Grid.css";
 
 enum ModalType {
@@ -13,8 +13,7 @@ enum ModalType {
 const WordleGrid: React.FC<{
   rows: number;
   columns: number;
-  expectedWord: string;
-}> = ({ rows, columns, expectedWord }) => {
+}> = ({ rows, columns }) => {
   const {
     validateWord,
     validateGridColor,
@@ -25,8 +24,9 @@ const WordleGrid: React.FC<{
     guessedWords,
     attempts,
     cellRefs,
-  } = useWordValidation(rows, columns, expectedWord);
+  } = useWordValidation(rows, columns);
   const [showModal, setShowModal] = useState<ModalType>(ModalType.None);
+  const { fetchExpectedWord, expectedWord } = useWordleContext()
 
   useEffect(() => {
     const isGuessedWordCorrect = guessedWords.some(
@@ -55,7 +55,7 @@ const WordleGrid: React.FC<{
             className={`${styles.cellInput} ${cellStyle}`}
             type="text"
             maxLength={1}
-            onKeyPress={(event) => handleKeyPress(event, rowIndex, colIndex)}
+            onKeyUp={(event) => handleKeyPress(event, rowIndex, colIndex)}
             ref={cellRef}
           />
         );
@@ -71,6 +71,7 @@ const WordleGrid: React.FC<{
 
   const handleModalClose = () => {
     setShowModal(ModalType.None);
+    fetchExpectedWord()
     setGuessedWords(Array(rows).fill(""));
     setRowIndex(0);
     setAttempts(0);
