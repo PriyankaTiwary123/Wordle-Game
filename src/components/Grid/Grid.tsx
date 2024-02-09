@@ -1,14 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWordValidation } from "../../hooks/useWordValidation";
 import { useWordleContext } from "../../context/WordleContext";
 import Modal from "../modal/Modal";
+import { ModalType } from "../../enums";
 import * as styles from "./Grid.css";
-
-enum ModalType {
-  None,
-  Win,
-  Loss,
-}
 
 const Grid: React.FC<{
   rows: number;
@@ -24,10 +19,9 @@ const Grid: React.FC<{
     attempts,
     cellRefs,
   } = useWordValidation(rows, columns);
-
-  const [showModal, setShowModal] = useState<ModalType>(ModalType.None);
   const { fetchExpectedWord, expectedWord } = useWordleContext();
-    const wordleGrids = [];
+  const [showModal, setShowModal] = useState<ModalType>(ModalType.None);
+  const wordleGrids = [];
 
   for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
     const row = [];
@@ -40,7 +34,7 @@ const Grid: React.FC<{
           className={`${styles.cellInput} ${cellStyle}`}
           type="text"
           maxLength={1}
-          onKeyUp={(event) => handleKeyPress(event, rowIndex, colIndex)}
+          onKeyDown={(event) => handleKeyPress(event, rowIndex, colIndex)}
           ref={cellRef}
           aria-label={`Cell ${rowIndex + 1}, ${colIndex + 1}`}
         />
@@ -61,8 +55,6 @@ const Grid: React.FC<{
       setShowModal(ModalType.Win);
     } else if (attempts === 5) {
       setShowModal(ModalType.Loss);
-    } else {
-      setShowModal(ModalType.None);
     }
   }, [guessedWords, expectedWord, attempts]);
 

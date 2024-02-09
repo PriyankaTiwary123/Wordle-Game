@@ -1,24 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useCellRefs from "./useCellRefs";
 import * as styles from "../components/Grid/Grid.css";
 import { REGEX } from "../constant";
 import { useWordleContext } from "../context/WordleContext";
 
-export const useWordValidation = (
-  rows: number,
-  columns: number,
-) => {
+export const useWordValidation = (rows: number, columns: number) => {
   const cellRefs = useCellRefs(rows, columns);
-  const { expectedWord } = useWordleContext()
+  const { expectedWord } = useWordleContext();
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
   const [attempts, setAttempts] = useState<number>(0);
   const [rowIndex, setRowIndex] = useState(0);
+  const [validatedRows, setValidatedRows] = useState<boolean[]>(
+    Array(rows).fill(false)
+  );
 
   const validateWord = () => {
     if (!expectedWord || rowIndex >= rows) {
       return;
     }
-
     let currentWord = "";
     for (let j = 0; j < columns; j++) {
       currentWord += cellRefs.current[rowIndex][j].current?.value || "";
@@ -36,20 +35,10 @@ export const useWordValidation = (
     colIndex: number,
     rowIndex: number
   ) => {
-    const value = currentCell.value;
-    if (value === "") return;
-    const updatedValue = value.slice(0, -1); // Remove the last character
-    currentCell.value = updatedValue;
-
-    if (updatedValue === "") {
-      if (colIndex > 0) {
-        const prevCol = colIndex - 1;
-        cellRefs.current[rowIndex][prevCol]?.current?.focus();
-      } else if (rowIndex > 0) {
-        const prevRow = rowIndex - 1;
-        const lastCol = columns - 1;
-        cellRefs.current[prevRow][lastCol]?.current?.focus();
-      }
+    currentCell.value = "";
+    if (colIndex > 0) {
+      const prevCol = colIndex - 1;
+      cellRefs.current[rowIndex][prevCol]?.current?.focus();
     }
   };
 
@@ -74,14 +63,11 @@ export const useWordValidation = (
     rowIndex: number,
     colIndex: number
   ) => {
-    const { key} = event;
+    const { key } = event;
     const currentCellRef = cellRefs.current[rowIndex][colIndex];
     const currentCell = currentCellRef.current;
-
     if (currentCell) {
-      if (/^[A-Za-z]$/.test(key)) {
-        handleCursorFocus(rowIndex, colIndex);
-      } else if (key === "Backspace") {
+      if (key === "Backspace") {
         event.preventDefault();
         handleBackSpace(currentCell, colIndex, rowIndex);
       } else if (key === "Enter") {
@@ -92,6 +78,12 @@ export const useWordValidation = (
         if (isRowFilled) {
           handleEnterKey(rowIndex);
         }
+      } else if (key === "Tab" || REGEX.test(key)) {
+        event.preventDefault();
+        if (REGEX.test(key)) {
+          currentCell.value = key.toUpperCase();
+        }
+        handleCursorFocus(rowIndex, colIndex);
       } else {
         event.preventDefault();
       }
@@ -117,6 +109,7 @@ export const useWordValidation = (
       return styles.wordNotInGrid;
     }
   };
+  
 
   return {
     validateWord,
@@ -125,7 +118,9 @@ export const useWordValidation = (
     setRowIndex,
     handleKeyPress,
     setAttempts,
+    setValidatedRows,
     guessedWords,
+    validatedRows,
     expectedWord,
     attempts,
     cellRefs,

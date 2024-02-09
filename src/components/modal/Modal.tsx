@@ -15,6 +15,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, showModal }) => {
 
   const modalTitle = showModal === ModalType.Win ? "Congratulations! You Won!" : "Oops! You Lost!";
   const modalDescription = showModal === ModalType.Win ? "You're a Winner, Champ! Congrats! You've just crushed it and won the game. Now, bask in your glory and celebrate like a boss! 🎉" : "Tough Luck, But Don't Give Up! You didn't quite make it this time, but hey, no worries! Give it another shot, and who knows, the next round might be your moment of glory! Keep going, champ! 💪";
+  const buttonText =  showModal === ModalType.Win ? "Play Again" : "Try Again"
 
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
@@ -24,7 +25,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, showModal }) => {
         <div id="modalDescription">
           {modalDescription}
         </div>
-        <Button onClick={onClose} text="Try Again" />
+        <Button onClick={onClose} text={buttonText}/>
       </div>
     </div>
   );
