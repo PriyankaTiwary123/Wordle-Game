@@ -16,6 +16,7 @@ globalStyle('html, body, #root', {
 globalStyle('#root', {
   backgroundImage: `linear-gradient(to bottom, #212226, #000000)`,
   display: 'flex',
+  color: '#ffffff',
   alignItems: 'center',
   justifyContent: 'center',
 });

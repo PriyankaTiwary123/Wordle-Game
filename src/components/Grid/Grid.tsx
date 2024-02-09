@@ -10,12 +10,11 @@ enum ModalType {
   Loss,
 }
 
-const WordleGrid: React.FC<{
+const Grid: React.FC<{
   rows: number;
   columns: number;
 }> = ({ rows, columns }) => {
   const {
-    validateWord,
     validateGridColor,
     setGuessedWords,
     setRowIndex,
@@ -25,8 +24,34 @@ const WordleGrid: React.FC<{
     attempts,
     cellRefs,
   } = useWordValidation(rows, columns);
+
   const [showModal, setShowModal] = useState<ModalType>(ModalType.None);
-  const { fetchExpectedWord, expectedWord } = useWordleContext()
+  const { fetchExpectedWord, expectedWord } = useWordleContext();
+    const wordleGrids = [];
+
+  for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
+    const row = [];
+    for (let colIndex = 0; colIndex < columns; colIndex++) {
+      const cellRef = cellRefs.current[rowIndex][colIndex];
+      const cellStyle = validateGridColor(colIndex, rowIndex);
+      row.push(
+        <input
+          key={colIndex}
+          className={`${styles.cellInput} ${cellStyle}`}
+          type="text"
+          maxLength={1}
+          onKeyUp={(event) => handleKeyPress(event, rowIndex, colIndex)}
+          ref={cellRef}
+          aria-label={`Cell ${rowIndex + 1}, ${colIndex + 1}`}
+        />
+      );
+    }
+    wordleGrids.push(
+      <div key={rowIndex} className={styles.wordleGridRow}>
+        {row}
+      </div>
+    );
+  }
 
   useEffect(() => {
     const isGuessedWordCorrect = guessedWords.some(
@@ -41,37 +66,9 @@ const WordleGrid: React.FC<{
     }
   }, [guessedWords, expectedWord, attempts]);
 
-  const generateGrid = useMemo(() => {
-    const wordleGrids = [];
-
-    for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
-      const row = [];
-      for (let colIndex = 0; colIndex < columns; colIndex++) {
-        const cellRef = cellRefs.current[rowIndex][colIndex];
-        const cellStyle = validateGridColor(colIndex, rowIndex);
-        row.push(
-          <input
-            key={colIndex}
-            className={`${styles.cellInput} ${cellStyle}`}
-            type="text"
-            maxLength={1}
-            onKeyUp={(event) => handleKeyPress(event, rowIndex, colIndex)}
-            ref={cellRef}
-          />
-        );
-      }
-      wordleGrids.push(
-        <div key={rowIndex} className={styles.wordleGridRow}>
-          {row}
-        </div>
-      );
-    }
-    return wordleGrids;
-  }, [rows, columns, guessedWords, expectedWord]);
-
   const handleModalClose = () => {
     setShowModal(ModalType.None);
-    fetchExpectedWord()
+    fetchExpectedWord();
     setGuessedWords(Array(rows).fill(""));
     setRowIndex(0);
     setAttempts(0);
@@ -88,11 +85,11 @@ const WordleGrid: React.FC<{
   };
 
   return (
-    <div>
-      {generateGrid}
+    <>
+      <div role="grid">{wordleGrids}</div>
       <Modal showModal={showModal} onClose={handleModalClose} />
-    </div>
+    </>
   );
 };
 
-export default WordleGrid;
+export default Grid;

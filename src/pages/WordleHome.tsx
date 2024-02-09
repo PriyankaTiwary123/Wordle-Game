@@ -9,9 +9,11 @@ interface WordleHomeProps {
 
 const WordleHome: React.FC<WordleHomeProps> = ({ rows, columns }) => {
   return (
-    <div>
+    <main>
+      <h1>Welcome to Wordle Game</h1>
+      <p>Guess the word by entering letters into the grid below.</p>
       <Grid rows={rows} columns={columns} />
-    </div>
+    </main>
   );
 };
 

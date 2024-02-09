@@ -1,4 +1,4 @@
-import { WORDLE_API_URL } from "./constant";
+import { WORDLE_API_URL } from "../constant";
 
 export const fetchRandomWord = async (): Promise<string | null> => {
   try {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useButton } from 'react-aria';
 import * as styles from "./Button.css";
 
 interface ButtonProps {
@@ -7,7 +8,7 @@ interface ButtonProps {
   className?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ onClick, text, className }) => {
+const Button: React.FC<ButtonProps> = ({ onClick, text }) => {
   return (
     <button className={styles.buttonStyle} onClick={onClick}>
       {text}

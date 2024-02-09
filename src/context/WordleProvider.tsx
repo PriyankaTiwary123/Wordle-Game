@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { fetchRandomWord } from '../api';
-import { WordleContext } from './WordleContext';
+import React, { useEffect, useState } from "react";
+import { fetchRandomWord } from "../service/api";
+import { WordleContext } from "./WordleContext";
 
 export const WordleProvider: React.FC<any> = ({ children }) => {
-  const [expectedWord, setExpectedWord] = useState<string>('');
+  const [expectedWord, setExpectedWord] = useState<string>("");
 
   const fetchExpectedWord = async () => {
     try {
@@ -12,7 +12,7 @@ export const WordleProvider: React.FC<any> = ({ children }) => {
         setExpectedWord(word);
       }
     } catch (error) {
-      console.error('Error fetching expected word:', error);
+      console.error("Error fetching expected word:", error);
     }
   };
 
@@ -26,8 +26,6 @@ export const WordleProvider: React.FC<any> = ({ children }) => {
   };
 
   return (
-    <WordleContext.Provider value={value}>
-      {children}
-    </WordleContext.Provider>
+    <WordleContext.Provider value={value}>{children}</WordleContext.Provider>
   );
 };
