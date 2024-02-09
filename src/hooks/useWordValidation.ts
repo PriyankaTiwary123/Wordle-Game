@@ -10,16 +10,8 @@ export const useWordValidation = (
 ) => {
   const cellRefs = useCellRefs(rows, columns);
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
-  const [isCorrectWord, setIsCorrectWord] = useState<boolean>(false);
   const [attempts, setAttempts] = useState<number>(0);
   const [rowIndex, setRowIndex] = useState(0);
-
-  useEffect(() => {
-    const isWordCorrect = guessedWords[rowIndex] === expectedWord;
-    if (isWordCorrect) {
-      setIsCorrectWord(true);
-    }
-  }, [guessedWords, rowIndex, expectedWord]);
 
   const validateWord = () => {
     if (!expectedWord || rowIndex >= rows) {
@@ -36,11 +28,6 @@ export const useWordValidation = (
       return updatedGuessedWords;
     });
     setRowIndex(rowIndex + 1);
-    if (currentWord.toUpperCase() === expectedWord.toUpperCase()) {
-      setIsCorrectWord(true);
-    } else {
-      setIsCorrectWord(false);
-    }
   };
 
   const handleBackSpace = (
@@ -86,21 +73,27 @@ export const useWordValidation = (
     rowIndex: number,
     colIndex: number
   ) => {
-    const { key } = event;
+    const { key} = event;
     const currentCellRef = cellRefs.current[rowIndex][colIndex];
     const currentCell = currentCellRef.current;
 
     if (currentCell) {
-    }
-    if (REGEX.test(key)) {
-      handleCursorFocus(rowIndex, colIndex);
-    } else if (key === "Backspace") {
-      event.preventDefault();
-      handleBackSpace(currentCell, colIndex, rowIndex);
-    } else if (key === "Enter") {
-      handleEnterKey(rowIndex);
-    } else {
-      event.preventDefault();
+      if (/^[A-Za-z]$/.test(key)) {
+        handleCursorFocus(rowIndex, colIndex);
+      } else if (key === "Backspace") {
+        event.preventDefault();
+        handleBackSpace(currentCell, colIndex, rowIndex);
+      } else if (key === "Enter") {
+        const isRowFilled = cellRefs.current[rowIndex].every(
+          (cellRef: React.RefObject<HTMLInputElement>) =>
+            cellRef.current?.value.trim() !== ""
+        );
+        if (isRowFilled) {
+          handleEnterKey(rowIndex);
+        }
+      } else {
+        event.preventDefault();
+      }
     }
   };
 
@@ -109,10 +102,8 @@ export const useWordValidation = (
     gridRowIndex: number
   ): string => {
     if (!expectedWord) return styles.wordNotInGrid;
-
     const guessedLetter = guessedWords[gridRowIndex]?.[colIndex]?.toUpperCase();
     const expectedLetter = expectedWord[colIndex]?.toUpperCase();
-
     if (!guessedLetter) {
       return "";
     }
@@ -132,9 +123,9 @@ export const useWordValidation = (
     setGuessedWords,
     setRowIndex,
     handleKeyPress,
+    setAttempts,
     guessedWords,
     expectedWord,
-    isCorrectWord,
     attempts,
     cellRefs,
   };

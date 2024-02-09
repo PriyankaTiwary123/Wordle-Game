@@ -1,23 +1,46 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { REGEX } from "../../constant";
+import { useState, useEffect, useMemo } from "react";
 import { useWordValidation } from "../../hooks/useWordValidation";
+import Modal from "../modal/Modal";
+import Button from "../Button/Button";
 import * as styles from "./Grid.css";
 
-interface GridProps {
+enum ModalType {
+  None,
+  Win,
+  Loss,
+}
+
+const WordleGrid: React.FC<{
   rows: number;
   columns: number;
   expectedWord: string;
-}
+}> = ({ rows, columns, expectedWord }) => {
+  const {
+    validateWord,
+    validateGridColor,
+    setGuessedWords,
+    setRowIndex,
+    handleKeyPress,
+    setAttempts,
+    guessedWords,
+    attempts,
+    cellRefs,
+  } = useWordValidation(rows, columns, expectedWord);
+  const [showModal, setShowModal] = useState<ModalType>(ModalType.None);
 
-const Grid: React.FC<GridProps> = ({ rows, columns, expectedWord }) => {
-  const { isCorrectWord, attempts } = useWordValidation(
-    rows,
-    columns,
-    expectedWord
-  );
+  useEffect(() => {
+    const isGuessedWordCorrect = guessedWords.some(
+      (word) => word.toUpperCase() === expectedWord
+    );
+    if (isGuessedWordCorrect) {
+      setShowModal(ModalType.Win);
+    } else if (attempts === 5) {
+      setShowModal(ModalType.Loss);
+    } else {
+      setShowModal(ModalType.None);
+    }
+  }, [guessedWords, expectedWord, attempts]);
 
-  const { validateGridColor, guessedWords, handleKeyPress, cellRefs } =
-    useWordValidation(rows, columns, expectedWord);
   const generateGrid = useMemo(() => {
     const wordleGrids = [];
 
@@ -32,7 +55,7 @@ const Grid: React.FC<GridProps> = ({ rows, columns, expectedWord }) => {
             className={`${styles.cellInput} ${cellStyle}`}
             type="text"
             maxLength={1}
-            onKeyUp={(event) => handleKeyPress(event, rowIndex, colIndex)}
+            onKeyPress={(event) => handleKeyPress(event, rowIndex, colIndex)}
             ref={cellRef}
           />
         );
@@ -46,7 +69,29 @@ const Grid: React.FC<GridProps> = ({ rows, columns, expectedWord }) => {
     return wordleGrids;
   }, [rows, columns, guessedWords, expectedWord]);
 
-  return <div>{generateGrid}</div>;
+  const handleModalClose = () => {
+    setShowModal(ModalType.None);
+    setGuessedWords(Array(rows).fill(""));
+    setRowIndex(0);
+    setAttempts(0);
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        const cellRef = cellRefs.current[i][j];
+        const currentCell = cellRef.current;
+        if (currentCell) {
+          currentCell.value = "";
+        }
+      }
+    }
+  };
+
+  return (
+    <div>
+      {generateGrid}
+      <Modal showModal={showModal} onClose={handleModalClose} />
+    </div>
+  );
 };
 
-export default Grid;
+export default WordleGrid;

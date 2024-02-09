@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchRandomWord } from './api';
 import * as styles from './App.css'
-import WordelHome from './pages/wordleGame/WordleHome'
+import WordleHome from './pages/WordleHome';
 
 function App() {
  const [expectedWord, setExpectedWord] = useState<string>(null ||'');
@@ -19,7 +19,7 @@ function App() {
   
   return (
      <div className={styles.rootStyles}>
-       <WordelHome rows={5} columns={5} expectedWord={expectedWord}/>
+       <WordleHome rows={5} columns={5} expectedWord={expectedWord}/>
      </div>
   )
 }
