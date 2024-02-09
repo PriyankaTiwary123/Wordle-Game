@@ -1,8 +1,8 @@
 import { useState } from "react";
 import useCellRefs from "./useCellRefs";
-import * as styles from "../components/Grid/Grid.css";
 import { REGEX } from "../constant";
 import { useWordleContext } from "../context/WordleContext";
+import * as styles from "../components/Grid/Grid.css";
 
 export const useWordValidation = (rows: number, columns: number) => {
   const cellRefs = useCellRefs(rows, columns);
@@ -94,21 +94,42 @@ export const useWordValidation = (rows: number, columns: number) => {
     colIndex: number,
     gridRowIndex: number
   ): string => {
-    if (!expectedWord) return styles.wordNotInGrid;
-    const guessedLetter = guessedWords[gridRowIndex]?.[colIndex]?.toUpperCase();
-    const expectedLetter = expectedWord[colIndex]?.toUpperCase();
-    if (!guessedLetter) {
-      return "";
+    if (!expectedWord) return styles.notFound;
+  
+    const response = [styles.empty, styles.empty, styles.empty, styles.empty, styles.empty];
+    const targetWordArr = expectedWord.split("");
+    const guessedWordArr = guessedWords[gridRowIndex]?.split("");
+    const letterCount: { [key: string]: number } = {};
+  
+    targetWordArr.forEach((letter) => {
+      letterCount[letter] = (letterCount[letter] || 0) + 1;
+    });
+  
+    for (let i = 0; i < targetWordArr.length; i++) {
+      const guessedLetter = guessedWordArr && guessedWordArr[i];
+      const targetLetter = targetWordArr[i];
+      if (targetLetter === guessedLetter) {
+        response[i] = styles.matched; 
+        letterCount[guessedLetter]--;
+      }
+    }
+  
+    for (let i = 0; i < targetWordArr.length; i++) {
+      const guessedLetter = guessedWordArr && guessedWordArr[i];
+      if (response[i] === styles.matched) continue;
+      if (letterCount[guessedLetter] && letterCount[guessedLetter] > 0) {
+        response[i] = styles.found;
+        letterCount[guessedLetter]--;
+      }
     }
 
-    if (guessedLetter === expectedLetter) {
-      return styles.wordMatched;
-    } else if (expectedWord.includes(guessedLetter)) {
-      return styles.wordInGrid;
-    } else {
-      return styles.wordNotInGrid;
+    if (response.every(cellStyle => cellStyle === styles.empty)) {
+      return styles.notFound;
     }
+  
+    return response[colIndex];
   };
+  
   
 
   return {

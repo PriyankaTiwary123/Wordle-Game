@@ -1,5 +1,4 @@
 import { style, globalStyle } from '@vanilla-extract/css'
-import { colors } from '../../colors.css';
 
 export const wordleGridRow = style({
   display: 'flex',
@@ -21,15 +20,18 @@ export const cellInput = style({
   textTransform: 'uppercase',
   cursor: 'pointer',
 });
-export const wordMatched = style({
+export const matched = style({
   backgroundColor: '#538D4E',
 });
 
-export const wordInGrid = style({
+export const found = style({
   backgroundColor: '#BEA11F',
 });
 
-export const wordNotInGrid = style({
+export const notFound = style({
+  backgroundColor: 'transparent',
+});
+export const empty = style({
   backgroundColor: '#3A3A3C',
 });
 
