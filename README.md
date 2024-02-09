@@ -1,30 +1,20 @@
-# React + TypeScript + Vite
+### How to start the Project 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. git clone https://github.com/PriyankaTiwary123/Wordle-Game.git
+2. cd Wordle/my-wordle-game
+3. npm i
+4. npm run dev 
+A Vit Project will open on  http://localhost:5173/
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##### Features
+--- 5*5 Grid to play Wordle.
+--- Each Row will be validated against a random word getting from API.
+--- If the word matches then all the cell in grid for that particluar row changes to Green.
+--- If non of the letter matches then all the cell in grid for that particular changes to Gray.
+--- if there is occurence of letter in target word then that particular cell chnages to yellow.
+--- If there are multiple occurence of letter only the letter at correct position is marked as green and remain occurence of that letter is marked as gray.
 
-## Expanding the ESLint configuration
+-- The Game is responsive in nature 
+-- Added Accessibility to all the required elements
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
