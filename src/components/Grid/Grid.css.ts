@@ -1,9 +1,9 @@
-import { style, globalStyle } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css';
 
 export const wordleGridRow = style({
   display: 'flex',
   gap: '10px'
-})
+});
 
 export const cellInput = style({
   width: '60px',
@@ -19,6 +19,12 @@ export const cellInput = style({
   fontWeight: '700',
   textTransform: 'uppercase',
   cursor: 'pointer',
+  '@media': {
+    '(max-width: 768px)': {
+      width: 'calc(20% - 10px)', // Adjust width for responsiveness
+      marginTop: '5px',
+    },
+  },
 });
 export const matched = style({
   backgroundColor: '#538D4E',
@@ -31,6 +37,7 @@ export const found = style({
 export const notFound = style({
   backgroundColor: 'transparent',
 });
+
 export const empty = style({
   backgroundColor: '#3A3A3C',
 });
