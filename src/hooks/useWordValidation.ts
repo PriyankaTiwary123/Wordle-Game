@@ -150,12 +150,14 @@ export const useWordValidation = (rows: number, columns: number) => {
         letterCount[guessedLetter]--;
       }
     }
-    const allGuessedLettersNotFound = guessedWordArr?.every(
-      (letter) => !targetWordArr.includes(letter)
-    );
+    if (guessedWordArr && guessedWordArr.length > 0) {
+      const allGuessedLettersNotFound = guessedWordArr.every(
+        (letter) => !targetWordArr.includes(letter)
+      );
 
-    if (allGuessedLettersNotFound) {
-      return styles.empty;
+      if (allGuessedLettersNotFound) {
+        return styles.empty;
+      }
     }
 
     if (response.every((cellStyle) => cellStyle === styles.empty)) {
