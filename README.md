@@ -1,7 +1,7 @@
 ### How to start the Project 
 
 1. git clone https://github.com/PriyankaTiwary123/Wordle-Game.git
-2. cd Wordle/my-wordle-game
+2. cd Wordle-Game
 3. npm i
 4. npm run dev 
 A Vit Project will open on  http://localhost:5173/
