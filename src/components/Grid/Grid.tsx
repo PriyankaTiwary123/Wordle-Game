@@ -15,6 +15,8 @@ const Grid: React.FC<{
     setRowIndex,
     handleKeyPress,
     setAttempts,
+    isRowValidated,
+    resetValidatedRows,
     guessedWords,
     attempts,
     cellRefs,
@@ -34,6 +36,7 @@ const Grid: React.FC<{
           className={`${styles.cellInput} ${cellStyle}`}
           type="text"
           maxLength={1}
+          disabled={isRowValidated(rowIndex)} // Disable input if row is validated
           onKeyDown={(event) => handleKeyPress(event, rowIndex, colIndex)}
           ref={cellRef}
           aria-label={`Cell ${rowIndex + 1}, ${colIndex + 1}`}
@@ -64,6 +67,7 @@ const Grid: React.FC<{
     setGuessedWords(Array(rows).fill(""));
     setRowIndex(0);
     setAttempts(0);
+    resetValidatedRows();
 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < columns; j++) {

@@ -15,6 +15,14 @@ export const useWordValidation = (rows: number, columns: number) => {
     Array(rows).fill(false)
   );
 
+  const markRowAsValidated = (rowIndex: number) => {
+    setValidatedRows((prevRows) => {
+      const updatedRows = [...prevRows];
+      updatedRows[rowIndex] = true;
+      return updatedRows;
+    });
+  };
+
   const getGuessedWordVal = () => {
     if (!expectedWord || rowIndex >= rows) {
       return;
@@ -68,6 +76,17 @@ export const useWordValidation = (rows: number, columns: number) => {
       const nextRow = rowIndex + 1;
       cellRefs.current[nextRow][0]?.current?.focus();
     }
+
+    // Mark the current row as validated
+    markRowAsValidated(rowIndex);
+  };
+
+  // Add a function to check if a row is validated
+  const isRowValidated = (rowIndex: number) => {
+    return validatedRows[rowIndex];
+  };
+  const resetValidatedRows = () => {
+    setValidatedRows(Array(rows).fill(false));
   };
 
   const handleCursorFocus = (rowIndex: number, colIndex: number) => {
@@ -174,6 +193,8 @@ export const useWordValidation = (rows: number, columns: number) => {
     handleKeyPress,
     setAttempts,
     setValidatedRows,
+    isRowValidated,
+    resetValidatedRows,
     guessedWords,
     validatedRows,
     expectedWord,
