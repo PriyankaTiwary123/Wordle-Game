@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { fetchRandomWord } from "../service/api";
 import { WordleContext } from "./WordleContext";
 
-export const WordleProvider: React.FC<any> = ({ children }) => {
+export const WordleProvider: React.FC<any> = ({ children, columns }) => {
   const [expectedWord, setExpectedWord] = useState<string>("");
 
-  const fetchExpectedWord = async () => {
+  const fetchExpectedWord = async (columnns: number) => {
     try {
-      const word = await fetchRandomWord();
+      const word = await fetchRandomWord(columnns);
       if (word) {
         setExpectedWord(word);
       }
@@ -17,7 +17,7 @@ export const WordleProvider: React.FC<any> = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchExpectedWord();
+    fetchExpectedWord(columns);
   }, []);
 
   const value = {

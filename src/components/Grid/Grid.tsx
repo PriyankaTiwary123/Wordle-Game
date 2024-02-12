@@ -56,14 +56,14 @@ const Grid: React.FC<{
     );
     if (isGuessedWordCorrect) {
       setShowModal(ModalType.Win);
-    } else if (attempts === 5) {
+    } else if (attempts === rows) {
       setShowModal(ModalType.Loss);
     }
   }, [guessedWords, expectedWord, attempts]);
 
   const handleModalClose = () => {
     setShowModal(ModalType.None);
-    fetchExpectedWord();
+    fetchExpectedWord(columns);
     setGuessedWords(Array(rows).fill(""));
     setRowIndex(0);
     setAttempts(0);

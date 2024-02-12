@@ -2,7 +2,7 @@ import React, { createContext, useContext } from "react";
 
 export interface WordleContextType {
   expectedWord: string;
-  fetchExpectedWord: () => void;
+  fetchExpectedWord: (columns: number) => void;
 }
 
 export const WordleContext = createContext<WordleContextType | undefined>(

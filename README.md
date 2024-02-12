@@ -8,7 +8,7 @@ A Vit Project will open on  http://localhost:5173/
 
 
 ##### Features
-1. 5*5 Grid to play Wordle.
+1. 5*5 Grid to play Wordle.- The Grid is customizable from App.js , we can change the number of rows and columns depending on our requirement.
 2. Each Row will be validated against a random word getting from API.
 3. The row which is validated becomes disable and cannot be edited anymore.
 4. If the word matches then all the cell in grid for that particluar row changes to Green.

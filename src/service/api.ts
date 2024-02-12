@@ -1,9 +1,9 @@
 import { WORDLE_API_URL } from "../constant";
 
-export const fetchRandomWord = async (): Promise<string | null> => {
+export const fetchRandomWord = async (columns: number): Promise<string | null> => {
   try {
     const response = await fetch(
-        WORDLE_API_URL
+        `${WORDLE_API_URL}?length=${columns}`
     );
     if (response.ok) {
       const data = await response.json();

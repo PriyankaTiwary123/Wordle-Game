@@ -141,13 +141,8 @@ export const useWordValidation = (rows: number, columns: number) => {
   };
 
   const validateWord = (colIndex: number, gridRowIndex: number): string => {
-    const response = [
-      styles.empty,
-      styles.empty,
-      styles.empty,
-      styles.empty,
-      styles.empty,
-    ];
+    const response = Array(columns).fill(styles.empty); // Initialize response with empty styles based on the number of columns
+
     const targetWordArr = expectedWord.split("");
     const guessedWordArr = guessedWords[gridRowIndex]?.split("");
     const letterCount = countLetterOccurrences(targetWordArr);
