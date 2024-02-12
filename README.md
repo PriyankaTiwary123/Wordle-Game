@@ -8,7 +8,7 @@ A Vit Project will open on  http://localhost:5173/
 
 
 ##### Features
-1. 5*5 Grid to play Wordle.- The Grid is customizable from the values of ROWS and COLUMNS in constant file , we can change the number of rows and columns depending on our requirement 
+1. 5*5 Grid to play Wordle.- The Grid is customizable from the values of ROWS and COLUMNS in constant file , we can change the number of rows and columns depending on our requirement (Columns is defaulted to 5 if we are trying to make column length 16 as API is currently restricted to only fetch word of maximum of length 15)
 2. Each Row will be validated against a random word getting from API.
 3. The row which is validated becomes disable and cannot be edited anymore.
 4. If the word matches then all the cell in grid for that particluar row changes to Green.
