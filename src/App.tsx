@@ -7,7 +7,7 @@ function App() {
   return (
     <div className={styles.rootStyles}>
       <WordleProvider columns={COLUMNS}>
-        <WordleHome rows={ROWS} columns={COLUMNS > 15 ? 5 : 15} />
+        <WordleHome rows={ROWS} columns={COLUMNS > 15 ? 5 : COLUMNS} />
       </WordleProvider>
     </div>
   );
